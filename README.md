@@ -9,6 +9,7 @@
   - [The Ice Modifiers Provided By The Annex](#the-ice-modifiers-provided-by-the-annex)
   - [1. **`eval'[!]{command}; …'`**](#1-evalcommand-)
 - [Additional Zinit commands](#additional-zinit-commands)
+- [Zinit tab completion support](#zinit-tab-completion-support)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
