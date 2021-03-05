@@ -1,0 +1,50 @@
+# Zinit recache subcommand tab completion
+
+typeset -a commands
+commands=(recache:'Regenerate eval cache')
+_arguments -C \
+  '1: :->command'\
+  '*: :->argument' && ret=0
+case $state in
+  command)
+      _describe -t commands "z-a-eval subcommand" commands && ret=0
+      ;;
+
+  argument)
+    case $words[2] in
+      recache)
+        # Plugins
+        typeset -a plugins
+        plugins=( "${ZINIT[PLUGINS_DIR]}"/**/evalcache.zsh(N:h:t) )
+        plugins=( "${plugins[@]//---//}" )
+        plugins=( "${plugins[@]:#_local/zinit}" )
+        plugins=( "${plugins[@]:#custom}" )
+
+        # Snippets
+        local -a snippets snippets_alreadyld
+        local sni
+
+        snippets=( "${ZINIT[SNIPPETS_DIR]}"/**/evalcache.zsh(N:h) )
+        snippets=( ${snippets[@]#${ZINIT[SNIPPETS_DIR]}/} )
+        snippets=( ${snippets[@]/(#b)(http|https|ftp|ftps|scp)--/${match[1]}://} )
+        snippets=( ${snippets[@]/--//} )
+
+        for sni ( ${snippets[@]} ) {
+          if [[ -n ${ZINIT_SNIPPETS[$sni]} ]]; then
+            snippets_alreadyld+=( $sni )
+            snippets=( ${snippets[@]:#$sni} )
+          fi
+        }
+
+        _alternative 'dsnippets:-- Downloaded Snippet --:compadd -a - snippets' \
+          'lsnippets:-- Already Loaded Snippet --:compadd -a - snippets_alreadyld' \
+          'plugins:-- Plugin --:compadd -a - plugins' && \
+            ret=0
+            ret=1
+      ;;
+      *)
+        ret=1
+      ;;
+    esac
+esac
+return $ret

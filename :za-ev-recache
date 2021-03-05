@@ -1,0 +1,59 @@
+# Copyright 2021 Nicholas Serrano
+# License: MIT
+
+# Synopsis:
+#   zinit recache <plugin/snippet>
+#
+
+:za-ev-recache(){
+
+emulate -LR zsh
+setopt extended_glob warn_create_global typeset_silent \
+        no_short_loops rc_quotes
+
+local -A ICE
+local -a plugins snippets
+local entry dir filename is_snippet REPLY
+(( ${+functions[.zinit-compute-ice]} )) || builtin source ${ZINIT[BIN_DIR]}"/zinit-autoload.zsh"
+if [[ -z $2 ]] {
+   +zinit-message '{pre}eval annex: {msg2}Recaching eval output of all plugins and snippets{…}{rst}'
+  plugins=( "${ZINIT[PLUGINS_DIR]}"/**/evalcache.zsh(N:h) )
+  snippets=( "${ZINIT[SNIPPETS_DIR]}"/**/evalcache.zsh(N:h) )
+  for entry in $plugins; do
+    dir="$entry"
+    entry="$entry:t"
+    entry="${entry//---//}"
+    entry="${entry:#_local/zinit}"
+    entry="${entry:#custom}"
+    +zinit-message "{pre}eval annex: {msg}Removing {meta2}$entry{msg} eval cache{…}{rst}"
+    command rm -f $dir/evalcache.{zsh,zsh.zwc}
+    .zinit-compute-ice $entry "pack-nf" ICE dir filename is_snippet
+    :za-ev-atclone-handler plugin "" "" "$entry" "$dir" ""
+    ICE=()
+  done
+  for entry in $snippets; do
+    dir="$entry"
+    entry=${entry#${ZINIT[SNIPPETS_DIR]}/}
+    entry=${entry/(#b)(http|https|ftp|ftps|scp)--/${match[1]}://}
+    entry=${entry/--//}
+    +zinit-message "{pre}eval annex: {msg}Removing {meta2}$entry{msg} eval cache{…}{rst}"
+    command rm -f $dir/evalcache.{zsh,zsh.zwc}
+    .zinit-compute-ice $entry "pack-nf" ICE dir filename is_snippet
+    :za-ev-atclone-handler snippet "" "" "$dir" ""
+    ICE=()
+  done
+} else {
+  +zinit-message "{pre}eval annex: {msg}Recaching eval output of {meta2}$2{msg}{…}{rst}"
+  .zinit-compute-ice $2 "pack-nf" ICE dir filename is_snippet
+  [[ -e $dir ]] && {
+    +zinit-message "{pre}eval annex: {msg}Removing eval cache{…}{rst}"
+    command rm -f $dir/evalcache.{zsh,zsh.zwc}
+    if (( is_snippet )) {
+      :za-ev-atclone-handler snippet "" "" "$dir" ""
+    } else {
+      :za-ev-atclone-handler plugin "" "" "$entry" "$dir" ""
+    }
+  }
+}
+
+}

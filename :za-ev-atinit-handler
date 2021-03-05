@@ -1,0 +1,30 @@
+# Copyright (c) 2021 Nicholas Serrano
+# License MIT
+
+:za-ev-atinit-handler() {
+
+emulate -RL zsh
+setopt extendedglob typesetsilent noshortloops
+
+if [[ "$1" = plugin ]] {
+    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
+} else {
+    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
+}
+
+#
+# eval'' ice – Add cache file to sourced file list, recreate cache if missing
+#
+
+if [[ -n ${ICE[eval]} ]] {
+  typeset -i ZINIT_Z_A_EVAL_SOURCED=0
+  local cachefile="$dir/evalcache.zsh"
+  ICE[multisrc]="$ICE[multisrc] $cachefile"
+
+  if [[ ! -r $cachefile && $ZINIT[annex-multi-flag:pull-active] -eq 0 ]] {
+      builtin print -r -- "${ICE[eval]}" >! $dir/._zinit/eval
+      :za-ev-atclone-handler "$1" "$2" "$3" "$4" "$5" "$6"
+  }
+}
+
+}
