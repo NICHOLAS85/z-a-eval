@@ -48,22 +48,9 @@ There is 1 ice-modifier provided and handled by this annex. They are:
 
 ## 1. **`eval'[!]{command}; …'`**
 
-It creates a `cache` at in the plugin/snippets root directory which stores the commands output. This cache is regenerated upon updates as well as when the cache file is removed.
+It creates a `cache` in the plugin/snippets root directory which stores the commands output. This cache is regenerated upon updates as well as when the cache file is removed.
 
 The optional preceding `!` flag means to store command output regardless of exit code.
-
-Example:
-
-```zsh
-% zinit ice from"gh-r" lbin"!fzf"
-% zinit load junegunn/fzf-bin
-…installation messages…
-% ls -l $ZPFX/bin/ | awk '{print $(NF-2),$(NF-1),$NF}'
-fzf -> /home/sg/.zinit/plugins/junegunn---fzf-bin/fzf
-% fzf --version
-0.23.1 (fc7630a)
-```
-**The ice can contain globs**. It will expand these when searching for the binary.
 
 Example:
 
@@ -77,7 +64,7 @@ Example:
 # Additional Zinit commands
 
 There's an additional Zinit command that's provided by this annex
-–`recache`. It recaches all your plugins/snippets eval outputs on demand, useful for when you change the value of the `eval''` ice but do not want to redownload the plugin/snippet to update its ices:
+–`recache`. It recaches all your plugins/snippets eval outputs on demand, useful for when you change the value of the `eval''` ice but do not want to redownload the plugin/snippet to update its ices, or rm the cache manually:
 
 ![recache-invocation](https://raw.githubusercontent.com/NICHOLAS85/z-a-eval/master/images/recache.png)
 
@@ -89,6 +76,7 @@ zinit recache [plugin/snippet]
 ```
 
 When run without a plugin/snippet argument, it will iterate through all plugin/snippets who have caches and regenerate them based on the current value of `eval''`. If the new value of `eval''` is empty, it will simply delete the cache file.
+
 When run with a plugin/snippet argument, it will only regenerate that single plugin/snippets cache based on the current value of `eval''`.
 
 # Zinit tab completion support
