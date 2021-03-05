@@ -79,7 +79,7 @@ Example:
 There's an additional Zinit command that's provided by this annex
 –`recache`. It recaches all your plugins/snippets eval outputs on demand, useful for when you change the value of the `eval''` ice but do not want to redownload the plugin/snippet to update its ices:
 
-![recache-invocation](https://raw.githubusercontent.com/NICHOLAS85/z-a-eval/master/images/shim-list.png)
+![recache-invocation](https://raw.githubusercontent.com/NICHOLAS85/z-a-eval/master/images/recache.png)
 
 
 Available options are:
