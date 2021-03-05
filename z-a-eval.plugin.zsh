@@ -27,6 +27,11 @@ autoload :za-ev-atclone-handler :za-ev-atinit-handler :za-ev-recache
     :za-ev-null-handler
 
 @zinit-register-annex "z-a-eval" \
+    hook:atload-50 \
+    :za-ev-atload-handler \
+    :za-ev-null-handler
+
+@zinit-register-annex "z-a-eval" \
     hook:atinit-50 \
     :za-ev-atinit-handler \
     :za-ev-null-handler
