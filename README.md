@@ -20,7 +20,7 @@
 A Zsh-Zinit annex (i.e. an extension) that provides functionality, which
 allows to:
 
-  1. Cache the output of arbitrarily slow command output to speed up shell startup time
+  1. Cache the output of arbitrarily slow initialization command to speed up shell startup time.
 
 ## Installation
 
@@ -35,7 +35,7 @@ the annex.
 
 ## How it works
 
-The output of a slow command is redirected to a file located within the plugin/snippets directory. The next time the plugin/snippet is loaded, this file will be sourced instead of running the slow command, speeding up shell startup.
+The output of a slow initialization command is redirected to a file located within the plugin/snippets directory and sourced while loading. The next time the plugin/snippet is loaded, this file will be sourced skipping the need to run the initialization command.
 
 ## The Ice Modifiers Provided By The Annex
 
@@ -46,11 +46,14 @@ There is 1 ice-modifier provided and handled by this annex. They are:
 
 ---
 
-## 1. **`eval'[!]{command}; …'`**
+## 1. **`eval'[!]{command}…'`**
 
-It creates a `cache` in the plugin/snippets root directory which stores the commands output. This cache is regenerated upon updates as well as when the cache file is removed.
+It creates a `cache` in the plugin/snippets root directory which stores the commands output. This cache is regenerated when:
+- The plugin/snippet is updated.
+- The cache file is removed.
+- With the new Zinit subcommand `recache`.
 
-The optional preceding `!` flag means to store command output regardless of exit code.
+The optional preceding `!` flag means to store command output regardless of exit code. Otherwise `eval''` will avoid caching ouput of code which returns a non-zero exit code.
 
 Example:
 
@@ -64,10 +67,9 @@ Example:
 # Additional Zinit commands
 
 There's an additional Zinit command that's provided by this annex
-–`recache`. It recaches all your plugins/snippets eval outputs on demand, useful for when you change the value of the `eval''` ice but do not want to redownload the plugin/snippet to update its ices, or rm the cache manually:
+–`recache`. It recaches all your plugins/snippets eval outputs on demand. Useful for when you change the value of the `eval''` ice but do not want to redownload the plugin/snippet to update its ices, or rm the cache manually:
 
 ![recache-invocation](https://raw.githubusercontent.com/NICHOLAS85/z-a-eval/master/images/recache.png)
-
 
 Available options are:
 
@@ -75,7 +77,7 @@ Available options are:
 zinit recache [plugin/snippet]
 ```
 
-When run without a plugin/snippet argument, it will iterate through all plugin/snippets who have caches and regenerate them based on the current value of `eval''`. If the new value of `eval''` is empty, it will simply delete the cache file.
+When run without an argument, it will iterate through all plugin/snippets who have caches and regenerate them based on the current value of `eval''`. If `eval''` is missing, it will simply delete the cache file.
 
 When run with a plugin/snippet argument, it will only regenerate that single plugin/snippets cache based on the current value of `eval''`.
 
