@@ -25,7 +25,7 @@ if [[ -z $2 ]] {
     entry="${entry//---//}"
     entry="${entry:#_local/zinit}"
     entry="${entry:#custom}"
-    +zinit-message "{pre}eval annex: {msg}Removing {meta2}$entry{msg} eval cache{…}{rst}"
+    +zinit-message "{pre}eval annex: {msg}Removing {pid}$entry{msg} eval cache{…}{rst}"
     command rm -f $dir/evalcache.{zsh,zsh.zwc}
     .zinit-compute-ice $entry "pack-nf" ICE dir filename is_snippet
     :za-ev-atclone-handler plugin "" "" "$entry" "$dir" ""
@@ -36,14 +36,14 @@ if [[ -z $2 ]] {
     entry=${entry#${ZINIT[SNIPPETS_DIR]}/}
     entry=${entry/(#b)(http|https|ftp|ftps|scp)--/${match[1]}://}
     entry=${entry/--//}
-    +zinit-message "{pre}eval annex: {msg}Removing {meta2}$entry{msg} eval cache{…}{rst}"
+    +zinit-message "{pre}eval annex: {msg}Removing {pid}$entry{msg} eval cache{…}{rst}"
     command rm -f $dir/evalcache.{zsh,zsh.zwc}
     .zinit-compute-ice $entry "pack-nf" ICE dir filename is_snippet
     :za-ev-atclone-handler snippet "" "" "$dir" ""
     ICE=()
   done
 } else {
-  +zinit-message "{pre}eval annex: {msg}Recaching eval output of {meta2}$2{msg}{…}{rst}"
+  +zinit-message "{pre}eval annex: {msg}Recaching eval output of {pid}$2{msg}{…}{rst}"
   .zinit-compute-ice $2 "pack-nf" ICE dir filename is_snippet
   [[ -e $dir ]] && {
     +zinit-message "{pre}eval annex: {msg}Removing eval cache{…}{rst}"
