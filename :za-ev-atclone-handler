@@ -39,8 +39,9 @@ if [[ -n ${ICE[eval]} ]] {
     builtin print -r -- "# ${(q)ICE[eval]#!}
 # generated with z-a-eval annex
 if (( ZINIT_Z_A_EVAL_SOURCED )) { return; }
-typeset -i ZINIT_Z_A_EVAL_SOURCED=1" >! $cachefile
-    builtin print -r -- "${output}" >>! $cachefile
+typeset -i ZINIT_Z_A_EVAL_SOURCED=1" >! "$cachefile"
+    builtin print -r -- "${output}" >>! "$cachefile"
+    zcompile -U "$cachefile"
   }
 }
 }
