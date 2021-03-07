@@ -19,6 +19,10 @@ if [[ "$1" = plugin ]] {
 if [[ -n ${ICE[eval]} ]] {
   local cachefile output savedcmd
   local -i ret=0
+  [[ -d "$dir" ]] || {
+    +zinit-message "{pre}eval annex: {warn}Warning: {msg}Unable to find directory for {pid}$id_as{msg}, skipping...{rst}"
+    return $?
+  }
   cachefile="$dir/evalcache.zsh"
   @zinit-substitute 'ICE[eval]'
   output="$((( ${+ICE[nocd]} == 0 )) && builtin cd -q "$dir"; eval ${ICE[eval]#!})"
