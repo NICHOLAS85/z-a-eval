@@ -20,7 +20,7 @@ if [[ -n ${ICE[eval]} ]] {
   local cachefile output savedcmd
   local -i ret=0
   [[ -d "$dir" ]] || {
-    +zinit-message "{pre}eval annex: {warn}Warning: {msg}Unable to find directory for {pid}$id_as{msg}, skipping...{rst}"
+    +zinit-message "{pre}eval annex: {warn}Warning: {msg}Unable to find directory for {pid}$id_as{msg}, skipping{…}{rst}"
     return $?
   }
   cachefile="$dir/evalcache.zsh"
@@ -28,7 +28,7 @@ if [[ -n ${ICE[eval]} ]] {
   output="$((( ${+ICE[nocd]} == 0 )) && builtin cd -q "$dir"; eval ${ICE[eval]#!})"
   ret=$?
   if (( ret )) && [[ ${ICE[eval]:0:1} != "!" ]] {
-    +zinit-message "{pre}eval annex: {warn}Warning: {msg}Output of (\`{cmd}${${ICE[eval]#!}:0:25}{…}{msg}') returned {error}$ret{msg}, not caching{rst}"
+    +zinit-message "{pre}eval annex: {warn}Warning: {msg}Output of (\`{cmd}${${ICE[eval]#!}:0:25}{…}{msg}') returned {error}$ret{msg}, disabling cache{…}{rst}"
     builtin print '' > "$cachefile"
     return 0
   } else {
@@ -38,10 +38,14 @@ if [[ -n ${ICE[eval]} ]] {
 
     builtin print -r -- "# ${(q)ICE[eval]#!}
 # generated with z-a-eval annex
-if (( ZINIT_Z_A_EVAL_SOURCED )) { return; }
+(( ZINIT_Z_A_EVAL_SOURCED )) && return
 typeset -i ZINIT_Z_A_EVAL_SOURCED=1" >! "$cachefile"
     builtin print -r -- "${output}" >>! "$cachefile"
-    zcompile -U "$cachefile"
+    zcompile -U "$cachefile" || {
+        +zinit-message "{pre}eval annex: {warn}Warning: {msg}Error compiling cache file, saving broken file to {url}'$dir/evalcache.broken'{msg} and disabling cache{…}{rst}"
+        command mv "$cachefile" "$dir/evalcache.broken"
+        builtin print '' > "$cachefile"
+    }
   }
 }
 }
