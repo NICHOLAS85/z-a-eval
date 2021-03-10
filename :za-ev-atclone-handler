@@ -41,7 +41,7 @@ if [[ -n ${ICE[eval]} ]] {
 (( ZINIT_Z_A_EVAL_SOURCED )) && return
 typeset -i ZINIT_Z_A_EVAL_SOURCED=1" >! "$cachefile"
     builtin print -r -- "${output}" >>! "$cachefile"
-    [[ ${+ICE[nocompile]} = 0 || ${ICE[nocompile]} = \! ]] {
+    if [[ ${+ICE[nocompile]} = 0 || ${ICE[nocompile]} = \! ]] {
         zcompile -U "$cachefile" || {
             +zinit-message "{pre}eval annex: {warn}Warning: {msg}Error compiling cache file, saving broken file to {url}'$dir/evalcache.broken'{msg} and disabling cache{…}{rst}"
             command mv "$cachefile" "$dir/evalcache.broken"
