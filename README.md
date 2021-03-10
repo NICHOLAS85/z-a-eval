@@ -6,8 +6,9 @@
   - [Introduction](#introduction)
   - [Installation](#installation)
   - [How it works](#how-it-works)
-  - [The Ice Modifiers Provided By The Annex](#the-ice-modifiers-provided-by-the-annex)
-  - [1. **`eval'[!]{command}; …'`**](#1-evalcommand-)
+  - [Ice Modifiers Provided By The Annex](#ice-modifiers-provided-by-the-annex)
+    - [1. **`eval'[!]{command}…'`**](#1-evalcommand)
+  - [Example Invocations](#example-invocations)
 - [Additional Zinit commands](#additional-zinit-commands)
 - [Zinit tab completion support](#zinit-tab-completion-support)
 
@@ -37,7 +38,7 @@ the annex.
 
 The output of a slow initialization command is redirected to a file located within the plugin/snippets directory and sourced while loading. The next time the plugin/snippet is loaded, this file will be sourced skipping the need to run the initialization command.
 
-## The Ice Modifiers Provided By The Annex
+## Ice Modifiers Provided By The Annex
 
 There is 1 ice-modifier provided and handled by this annex. They are:
   1. `eval''` – creates a `cache` containing the output of a command.
@@ -46,7 +47,7 @@ There is 1 ice-modifier provided and handled by this annex. They are:
 
 ---
 
-## 1. **`eval'[!]{command}…'`**
+### 1. **`eval'[!]{command}…'`**
 
 It creates a `cache` in the plugin/snippets root directory which stores the commands output. This cache is regenerated when:
 - The plugin/snippet is updated.
@@ -55,14 +56,47 @@ It creates a `cache` in the plugin/snippets root directory which stores the comm
 
 The optional preceding `!` flag means to store command output regardless of exit code. Otherwise `eval''` will avoid caching ouput of code which returns a non-zero exit code.
 
-Example:
+## Example Invocations
 
 ```zsh
-% zinit ice wait"2" eval"dircolors -b LS_COLORS" lucid \
-          atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”'
-% zinit light trapd00r/LS_COLORS
+## Without z-a-eval
+zinit ice as"command" from"gh-r" mv"zoxide* -> zoxide"  \
+      atclone"./zoxide init zsh > init.zsh"  atpull"%atclone" src"init.zsh" nocompile'!'
+zinit light ajeetdsouza/zoxide
+
+## With z-a-eval
+zinit ice as"command" from"gh-r" mv"zoxide* -> zoxide" \
+      eval"./zoxide init zsh"
+zinit light ajeetdsouza/zoxide
 ```
 
+```zsh
+## Without z-a-eval
+zinit ice atclone"dircolors -b LS_COLORS > init.zsh" \
+    atpull"%atclone" pick"init.zsh" nocompile'!' \
+    atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”'
+zinit light trapd00r/LS_COLORS
+
+## With z-a-eval
+zinit ice eval"dircolors -b LS_COLORS" \
+    atload'zstyle ":completion:*" list-colors “${(s.:.)LS_COLORS}”'
+zinit light trapd00r/LS_COLORS
+```
+
+```zsh
+## Without Zinit
+if [[ "${+commands[kubectl]}" == 1 ]]; then
+    eval $(kubectl completion zsh)
+fi
+
+## With Zinit and z-a-eval
+## Updated during `zinit update`
+zinit ice id-as"kubectl_completion" has"kubectl" \
+      eval"kubectl completion zsh" run-atpull
+zinit light zdharma/null
+```
+
+See https://github.com/NICHOLAS85/z-a-eval/issues/2#issuecomment-793374468 for more examples.
 
 # Additional Zinit commands
 
