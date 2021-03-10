@@ -48,7 +48,7 @@ autoload :za-ev-atclone-handler :za-ev-atinit-handler :za-ev-recache
 # Lastly the shim is assigned as zinits completion with a compdef call
 autoload -Uz _zinit_recache
 _zinit_shim(){
-  unset -f _zinit_shim
+  unset -f $funcstack[1]
   eval "
     $funcstack[1](){
       ${(F)${(@ok)functions[(I)_zinit*]/%/ \"\$@\"}//$funcstack[1] \"\$@\"}
