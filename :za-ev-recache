@@ -5,8 +5,6 @@
 #   zinit recache <plugin/snippet>
 #
 
-:za-ev-recache(){
-
 emulate -LR zsh
 setopt extended_glob warn_create_global typeset_silent \
         no_short_loops rc_quotes
@@ -44,5 +42,3 @@ for entry in $plugins $snippets; do
     unset dir
     ICE=()
 done
-
-}

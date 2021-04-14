@@ -1,8 +1,6 @@
 # Copyright (c) 2021 Nicholas Serrano
 # License MIT
 
-:za-ev-atclone-handler() {
-
 emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops
 
@@ -49,5 +47,4 @@ typeset -i ZINIT_Z_A_EVAL_SOURCED=1" >! "$cachefile"
         }
     }
   }
-}
 }

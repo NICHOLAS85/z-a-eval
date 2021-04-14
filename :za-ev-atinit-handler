@@ -1,8 +1,6 @@
 # Copyright (c) 2021 Nicholas Serrano
 # License MIT
 
-:za-ev-atinit-handler() {
-
 emulate -RL zsh
 setopt extendedglob typesetsilent noshortloops
 
@@ -25,6 +23,4 @@ if [[ -n ${ICE[eval]} ]] {
       builtin print -r -- "${ICE[eval]}" >! $dir/._zinit/eval
       :za-ev-atclone-handler "$1" "$2" "$3" "$4" "$5" "$6"
   }
-}
-
 }
