@@ -20,7 +20,10 @@ if [[ -n ${ICE[eval]} ]] {
   ICE[multisrc]="$ICE[multisrc] $cachefile"
 
   if [[ ! -r "$cachefile" && $ZINIT[annex-multi-flag:pull-active] -eq 0 ]] {
-      builtin print -r -- "${ICE[eval]}" >! $dir/._zinit/eval
+      [[ -w $dir ]] && {
+        (( ${+functions[.zinit-store-ices]} )) || builtin source ${ZINIT[BIN_DIR]}"/zinit-side.zsh"
+        .zinit-store-ices "$dir/._zinit" ICE "" "" "" ""
+      }
       :za-ev-atclone-handler "$1" "$2" "$3" "$4" "$5" "$6"
   }
 }
