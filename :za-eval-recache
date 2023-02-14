@@ -1,4 +1,4 @@
-# Copyright 2021 Nicholas Serrano
+# Copyright 2021-2023 Nicholas Serrano
 # License: MIT
 
 # Synopsis:
@@ -15,7 +15,7 @@ local -a plugins snippets
 local entry dir filename is_snippet REPLY reply
 
 if [[ -z $2 ]] {
-    +zinit-message '{pre}eval annex: {msg2}Recaching eval output of all plugins and snippets{…}{rst}'
+    +zinit-message '{msg2}Recaching eval output of all plugins and snippets{…}{rst}'
     plugins=( "${ZINIT[PLUGINS_DIR]}"/**/evalcache.zsh(N:h:t) )
     plugins=( "${plugins[@]//---//}" )
     plugins=( "${plugins[@]:#_local/zinit}" )
@@ -25,13 +25,13 @@ if [[ -z $2 ]] {
     snippets=( ${snippets[@]/(#b)(http|https|ftp|ftps|scp)--/${match[1]}://} )
     snippets=( ${snippets[@]/--//} )
 } else {
-    +zinit-message "{pre}eval annex: {msg}Recaching eval output of {pid}$2{msg}{…}{rst}"
+    +zinit-message "{msg2}Recaching eval output of {pid}$2{msg2}{…}{rst}"
     .zinit-compute-ice $2 "pack-nf" ICE dir filename is_snippet || return $?
     ((is_snippet)) && snippets=($2) || plugins=($2)
 }
 
 for entry in $plugins $snippets; do
-    +zinit-message "{pre}eval annex: {msg}Removing {pid}$entry{msg} eval cache{…}{rst}"
+    +zinit-message "{msg2}Removing {pid}$entry{msg} eval cache{…}{rst}"
     [[ -e "$dir" ]] || .zinit-compute-ice $entry "pack-nf" ICE dir filename is_snippet || return $?
     command rm -f "$dir"/evalcache.{zsh,zsh.zwc}
     ((is_snippet)) && {

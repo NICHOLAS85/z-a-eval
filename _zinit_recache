@@ -1,3 +1,6 @@
+# Copyright 2021-2023 Nicholas Serrano
+# License: MIT
+
 # Zinit recache subcommand tab completion
 
 typeset -a commands

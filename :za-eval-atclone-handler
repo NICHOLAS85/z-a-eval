@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Nicholas Serrano
+# Copyright (c) 2021-2023 Nicholas Serrano
 # License MIT
 
 emulate -RL zsh
@@ -18,7 +18,7 @@ if [[ -n ${ICE[eval]} ]] {
   local cachefile output savedcmd
   local -i ret=0
   [[ -d "$dir" ]] || {
-    +zinit-message "{pre}eval annex: {warn}Warning: {msg}Unable to find directory for {pid}$id_as{msg}, skipping{…}{rst}"
+    +zinit-message "{info}[{pre}eval{info}] {log-warn}{msg}Unable to find directory for {pid}$id_as{msg}, skipping{…}{rst}"
     return $?
   }
   cachefile="$dir/evalcache.zsh"
@@ -26,12 +26,12 @@ if [[ -n ${ICE[eval]} ]] {
   output="$((( ${+ICE[nocd]} == 0 )) && builtin cd -q "$dir"; eval ${ICE[eval]#!})"
   ret=$?
   if (( ret )) && [[ ${ICE[eval]:0:1} != "!" ]] {
-    +zinit-message "{pre}eval annex: {warn}Warning: {msg}Output of (\`{cmd}${${ICE[eval]#!}:0:25}{…}{msg}') returned {error}$ret{msg}, disabling cache{…}{rst}"
+    +zinit-message "{info}[{pre}eval{info}] {log-warn}{msg}Output of (\`{cmd}${${ICE[eval]#!}:0:25}{…}{msg}') returned {error}$ret{msg}, disabling cache{…}{rst}"
     builtin print '' > "$cachefile"
     return 0
   } else {
     if (( !OPTS[opt_-q,--quiet] )) && [[ $hook != "atinit" ]] {
-      +zinit-message "{pre}eval annex: {msg}Caching output of (\`{cmd}${${ICE[eval]#!}:0:25}{…}{msg}'){rst}"
+      +zinit-message "{info}[{pre}eval{info}] {msg}Caching output of (\`{cmd}${${ICE[eval]#!}:0:25}{…}{msg}'){rst}"
     }
 
     builtin print -r -- "# ${(q)ICE[eval]#!}
@@ -41,9 +41,9 @@ typeset -i ZINIT_Z_A_EVAL_SOURCED=1" >! "$cachefile"
     builtin print -r -- "${output}" >>! "$cachefile"
     if [[ ${+ICE[nocompile]} = 0 || ${ICE[nocompile]} = \! ]] {
         zcompile -U "$cachefile" || {
-            +zinit-message "{pre}eval annex: {warn}Warning: {msg}Error compiling cache file, saving broken file to {url}'$dir/evalcache.broken'{msg} and disabling cache{…}{rst}"
+            +zinit-message "{info}[{pre}eval{info}] {log-warn}{msg}Error compiling cache file, saving broken file to {url}'$dir/evalcache.broken'{msg} and disabling cache{…}{rst}"
             command mv "$cachefile" "$dir/evalcache.broken"
-            builtin print '' > "$cachefile"
+            builtin print '# An error occured compiling this cache file ' > "$cachefile"
         }
     }
   }

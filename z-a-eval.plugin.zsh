@@ -1,45 +1,48 @@
-# Copyright (c) 2021 Nicholas Serrano
+# Copyright (c) 2021-2023 Nicholas Serrano
 # License MIT
 
 # According to the Zsh Plugin Standard:
-# http://zdharma.org/Zsh-100-Commits-Club/Zsh-Plugin-Standard.html
+# https://zdharma-continuum.github.io/Zsh-100-Commits-Club/Zsh-Plugin-Standard.html#zero-handling
 
 0="${${ZERO:-${0:#$ZSH_ARGZERO}}:-${(%):-%N}}"
 0="${${(M)0:#/*}:-$PWD/$0}"
 
-autoload :za-ev-atclone-handler :za-ev-atinit-handler :za-ev-recache
+autoload :za-eval-atclone-handler :za-eval-atinit-handler :za-eval-recache
 
 # An empty stub to fill the help handler fields
-:za-ev-null-handler() { :; }
+:za-eval-null-handler() { :; }
+:za-eval-recache-help-handler() {
+    builtin print -r -- "—— ${ZINIT[col-annex]}recache${ZINIT[col-rst]} ${ZINIT[col-pname]}plg-spec${ZINIT[col-rst]}|URL          – recache plugin or snippet (or all plugins and snippets if no argument passed) which have caches based on their current ${ZINIT[col-ice]}eval''${ZINIT[col-rst]} ice value - ${ZINIT[col-u]}Registered by ${ZINIT[col-annex]}z-a-eval${ZINIT[col-rst]}${ZINIT[col-u]} annex${ZINIT[col-rst]}"
+}
 
 # Remove temporary variable
-:za-ev-atload-handler() { [[ -n ${ICE[eval]} ]] && unset ZINIT_Z_A_EVAL_SOURCED; }
+:za-eval-atload-handler() { [[ -n ${ICE[eval]} ]] && unset ZINIT_Z_A_EVAL_SOURCED; }
 
 @zinit-register-annex "z-a-eval" \
     hook:atclone-50 \
-    :za-ev-atclone-handler \
-    :za-ev-null-handler \
+    :za-eval-atclone-handler \
+    :za-eval-null-handler \
     "eval''" # also register new ices
 
 @zinit-register-annex "z-a-eval" \
     hook:atpull-50 \
-    :za-ev-atclone-handler \
-    :za-ev-null-handler
+    :za-eval-atclone-handler \
+    :za-eval-null-handler
 
 @zinit-register-annex "z-a-eval" \
     hook:atload-50 \
-    :za-ev-atload-handler \
-    :za-ev-null-handler
+    :za-eval-atload-handler \
+    :za-eval-null-handler
 
 @zinit-register-annex "z-a-eval" \
     hook:atinit-50 \
-    :za-ev-atinit-handler \
-    :za-ev-null-handler
+    :za-eval-atinit-handler \
+    :za-eval-null-handler
 
 @zinit-register-annex "z-a-eval" \
     subcommand:recache \
-    :za-ev-recache \
-    :za-ev-null-handler
+    :za-eval-recache \
+    :za-eval-recache-help-handler
 
 (( Z_A_USECOMP )) || return;
 
