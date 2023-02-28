@@ -35,9 +35,9 @@ for entry in $plugins $snippets; do
     [[ -e "$dir" ]] || .zinit-compute-ice $entry "pack-nf" ICE dir filename is_snippet || return $?
     command rm -f "$dir"/evalcache.{zsh,zsh.zwc}
     ((is_snippet)) && {
-        :za-ev-atclone-handler snippet "" "$entry" "$dir" ""
+        :za-eval-atclone-handler snippet "" "$entry" "$dir" ""
     } || {
-        :za-ev-atclone-handler plugin "" "" "$entry" "$dir" ""
+        :za-eval-atclone-handler plugin "" "" "$entry" "$dir" ""
     }
     unset dir
     ICE=()

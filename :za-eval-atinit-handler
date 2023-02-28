@@ -24,6 +24,6 @@ if [[ -n ${ICE[eval]} ]] {
         (( ${+functions[.zinit-store-ices]} )) || builtin source ${ZINIT[BIN_DIR]}"/zinit-side.zsh"
         .zinit-store-ices "$dir/._zinit" ICE "" "" "" ""
       }
-      :za-ev-atclone-handler "$1" "$2" "$3" "$4" "$5" "$6"
+      :za-eval-atclone-handler "$1" "$2" "$3" "$4" "$5" "$6"
   }
 }
