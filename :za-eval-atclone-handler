@@ -5,10 +5,15 @@ emulate -RL zsh
 setopt extendedglob warncreateglobal typesetsilent noshortloops
 
 if [[ "$1" = plugin ]] {
-    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
+    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6" update="$7"
 } else {
-    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
+    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5" update="$6"
 }
+
+# Due to now running during %atpull (always at pull), simply exit if no updates
+if [[ $update == update:0 ]]; then
+  return 0
+fi
 
 #
 # eval'' ice – creation of cache file

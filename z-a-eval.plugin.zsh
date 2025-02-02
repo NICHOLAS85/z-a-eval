@@ -19,13 +19,13 @@ autoload :za-eval-atclone-handler :za-eval-atinit-handler :za-eval-recache
 :za-eval-atload-handler() { [[ -n ${ICE[eval]} ]] && unset ZINIT_Z_A_EVAL_SOURCED; }
 
 @zinit-register-annex "z-a-eval" \
-    hook:atclone-50 \
+    hook:atclone-55 \
     :za-eval-atclone-handler \
     :za-eval-null-handler \
     "eval''" # also register new ices
 
 @zinit-register-annex "z-a-eval" \
-    hook:atpull-50 \
+    hook:%atpull-55 \
     :za-eval-atclone-handler \
     :za-eval-null-handler
 

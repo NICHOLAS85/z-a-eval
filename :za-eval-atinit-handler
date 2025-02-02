@@ -5,9 +5,9 @@ emulate -RL zsh
 setopt extendedglob typesetsilent noshortloops
 
 if [[ "$1" = plugin ]] {
-    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6"
+    local type="$1" user="$2" plugin="$3" id_as="$4" dir="${5#%}" hook="$6" update="$7"
 } else {
-    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5"
+    local type="$1" url="$2" id_as="$3" dir="${4#%}" hook="$5" update="$6"
 }
 
 #
@@ -18,8 +18,9 @@ if [[ -n ${ICE[eval]} ]] {
   typeset -i ZINIT_Z_A_EVAL_SOURCED=0
   local cachefile="$dir/evalcache.zsh"
   ICE[multisrc]="$ICE[multisrc] $cachefile"
-
-  if [[ ! -r "$cachefile" && $ZINIT[annex-multi-flag:pull-active] -eq 0 ]] {
+  # ZINIT[annex-multi-flag:pull-active] does not seem to reset between plugins during atinit,
+  # switching to undocumented update flag which does
+  if [[ ! -r "$cachefile" && ${update:-update:0} == update:0 ]] {
       [[ -w $dir ]] && {
         (( ${+functions[.zinit-store-ices]} )) || builtin source ${ZINIT[BIN_DIR]}"/zinit-side.zsh"
         .zinit-store-ices "$dir/._zinit" ICE "" "" "" ""

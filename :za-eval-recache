@@ -10,12 +10,13 @@ setopt extended_glob warn_create_global typeset_silent \
         no_short_loops rc_quotes
 
 (( ${+functions[.zinit-compute-ice]} )) || builtin source ${ZINIT[BIN_DIR]}"/zinit-side.zsh"
-local -A ICE
+local -A ICE ices
 local -a plugins snippets
 local entry dir filename is_snippet REPLY reply
 
 if [[ -z $2 ]] {
     +zinit-message '{msg2}Recaching eval output of all plugins and snippets{…}{rst}'
+    # Include plugins/snippets who already have a cache
     plugins=( "${ZINIT[PLUGINS_DIR]}"/**/evalcache.zsh(N:h:t) )
     plugins=( "${plugins[@]//---//}" )
     plugins=( "${plugins[@]:#_local/zinit}" )
@@ -24,10 +25,35 @@ if [[ -z $2 ]] {
     snippets=( ${snippets[@]#${ZINIT[SNIPPETS_DIR]}/} )
     snippets=( ${snippets[@]/(#b)(http|https|ftp|ftps|scp)--/${match[1]}://} )
     snippets=( ${snippets[@]/--//} )
+    # Include plugins/snippets who use the eval ice
+    for entry ( $ZINIT_REGISTERED_PLUGINS ) {
+        if [[ -n $ZINIT_SICE[$entry] ]] {
+            ices=( "${(@Q)${(@z)ZINIT_SICE[$entry]}}" )
+            if (( ${#ices[eval]} )) {
+                if (( ! ${plugins[(Ie)$entry]} )) {
+                    plugins+=( "$entry" )
+                }
+            }
+        }
+    }
+    for entry ( $ZINIT_SNIPPETS ) {
+        if [[ -n $ZINIT_SICE[$entry] ]] {
+            ices=( "${(@Q)${(@z)ZINIT_SICE[$entry]}}" )
+            if (( ${#ices[eval]} )) {
+                if (( ! ${snippets[(Ie)$entry]} )) {
+                    snippets+=( "$entry" )
+                }
+            }
+        }
+    }
 } else {
-    +zinit-message "{msg2}Recaching eval output of {pid}$2{msg2}{…}{rst}"
     .zinit-compute-ice $2 "pack-nf" ICE dir filename is_snippet || return $?
-    ((is_snippet)) && snippets=($2) || plugins=($2)
+    if [[ ${#ICE[eval]} -eq 0 && ! -f "$dir"/evalcache.zsh && ! -f "$dir"/evalcache.zsh.zwc ]] {
+        +zinit-message "{pid}$2{msg2} does not have a eval'' ice or cache to manage, exiting{rst}"
+    } else {
+        +zinit-message "{msg2}Recaching eval output of {pid}$2{msg2}{…}{rst}"
+        ((is_snippet)) && snippets=($2) || plugins=($2)
+    }
 }
 
 for entry in $plugins $snippets; do
